@@ -73,6 +73,7 @@ app.use(cors({
 
 
 app.get('/test',(req,res)=>{
+	console.log('Account SID '+process.env.ACCOUNT_SID);
 	res.json({message:"Test route is successfully running"});
 })
 
