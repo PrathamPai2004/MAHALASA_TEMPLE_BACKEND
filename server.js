@@ -9,7 +9,7 @@ import 'dotenv/config';
 // import jwt, { verify } from 'jsonwebtoken'
 // import nodemailer from 'nodemailer';
 // const User =
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 const JWT_SECRET = "pratham_jwt_secret_2004_born"
 
 
