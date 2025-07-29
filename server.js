@@ -439,6 +439,7 @@ app.post('/verify-otp',(req,res)=>{
 
 app.get('/',(req,res)=>{
 	console.log("Server succesfully hit the / route")
+	console.log("Account SID got as "+ACCOUNT_SID)
 	res.send("Successfully runnninf the server ")
 
 	sendMail("connect.prathampai@gmail.com","This is a sample email","HELLO PRATHAM, THIS IS ANOTHER PRATHAM FROM NODE JS ");
