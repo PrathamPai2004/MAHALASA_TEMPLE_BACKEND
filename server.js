@@ -72,6 +72,18 @@ app.use(cors({
 }))
 
 
+import fetch from 'node-fetch'; // or use 'axios'
+
+app.get('/my-ip', async (req, res) => {
+  try {
+    const response = await fetch('https://api64.ipify.org?format=json');
+    const data = await response.json();
+    res.json({ ip: data.ip });
+  } catch (error) {
+    console.error('IP Fetch failed:', error);
+    res.status(500).json({ error: 'Could not fetch IP' });
+  }
+});
 
 app.get('/test',(req,res)=>{
 	console.log('Account SID '+process.env.ACCOUNT_SID);
