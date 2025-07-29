@@ -72,7 +72,9 @@ app.use(cors({
 
 
 
-
+app.get('/test',(req,res)=>{
+	res.json({message:"Test route is successfully running"});
+})
 
 app.use(cookieParser())
 
