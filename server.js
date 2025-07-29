@@ -67,6 +67,7 @@ app.use(express.json())
 
 app.use(cors({
 	origin : ["https://mahalasasaunsthan.vercel.app"],
+	credentials:true,
 	methods :["GET","POST"],	
 }))
 
