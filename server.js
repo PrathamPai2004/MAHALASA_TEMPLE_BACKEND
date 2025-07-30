@@ -516,3 +516,38 @@ app.get('/get-ranks', async (req, res) => {
 
   res.json(ranks);
 });
+
+
+
+app.get('/seva-stats',async (req,res)=>{
+	try{
+		const sevaData =  await sevaAdminModel.find()
+		// console.log(sevaData)/
+		console.log('Seva-stats getting...')
+		sevaData.forEach((seva) => {
+ 			 console.log(`Name: ${seva.seva_name}, Bookings: ${seva.bookings}, seva_amount : ${seva.seva_amount}`);
+			});
+		res.json(sevaData)
+	}
+	catch(error){
+		console.log('Error part')
+		res.status(500).json({error:"Couldnt fetch the seva lists"})
+	}
+})
+
+const adminName =  "abc";
+const adminPassword="abc";
+
+app.post("/admin-login", async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    if (username === adminName && password === adminPassword) {
+      return res.status(200).json({ message: "success", username });
+    } else {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: "Server error: " + error.message });
+  }
+});
