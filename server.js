@@ -384,72 +384,53 @@ const AUTH_TOKEN = process.env.AUTH_TOKEN
 const MY_PHONE = process.env.MY_PHONE
 
 const otpClient = twilio(ACCOUNT_SID,AUTH_TOKEN);
-
 const otpStore = new Map();
-let finalPhoneNum;
 
+app.post('/send-otp', async (req, res) => {
+  let { phoneNum } = req.body;
+  phoneNum = phoneNum.replace(/[\s-]/g, '');
+  if (!/^\d{10}$/.test(phoneNum)) {
+    return res.status(400).json({ success: false, message: "Invalid phone number" });
+  }
+  const formattedPhone = '+91' + phoneNum;
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
+  try {
+    await otpClient.messages.create({
+      body: `Your OTP for seva is: ${otp} \n TimeStamp: ${Date.now()}`,
+      from: MY_PHONE,
+      to: formattedPhone,
+    });
+    console.log(`OTP sent to ${formattedPhone}: ${otp}`);
+    otpStore.set(formattedPhone, otp);
 
-app.post('/send-otp',async (req,res)=>{
-	let {phoneNum} = req.body
-	const otp = Math.floor(100000 + Math.random() * 900000).toString();
-	phoneNum = phoneNum.replace(/[\s-]/g, '');
-	if (/^\d{10}$/.test(phoneNum)) {
-    phoneNum= '+91' + phoneNum;
-	finalPhoneNum = phoneNum
-  	}
-	
-	// console.log(finalPhoneNum);
-	console.log(finalPhoneNum)
-	
-	
-	console.log('OTP generated..')
-	try{
-		await otpClient.messages.create({
-			body:`Your OTP for seva is : ${otp} \n TimeStamp : ${Date.now()}`,
+    setTimeout(() => otpStore.delete(formattedPhone), 5 * 60 * 1000); // auto-expire
 
-			from:MY_PHONE,
-			to:phoneNum,
-		});
-		console.log("OTP sent successfully to phone "+finalPhoneNum)
-		console.log("OTP SENT IS "+otp)
-		otpStore.set(finalPhoneNum,otp);
+    res.json({ success: true, message: "OTP sent successfully" });
+  } catch (err) {
+    console.error("Error sending OTP:", err.message);
+    res.status(500).json({ success: false, message: "Failed to send OTP" });
+  }
+});
 
-		setTimeout(() => {
-			otpStore.delete(finalPhoneNum)
-		}, 5 * 60 * 1000);
-		//5 minutes
+app.post('/verify-otp', (req, res) => {
+  console.log("verify-otp route hit");
+  let { phoneNum, otp } = req.body;
+  phoneNum = phoneNum.replace(/[\s-]/g, '');
+  const formattedPhone = '+91' + phoneNum;
 
-		res.json({success : true,message:`Otp sent successfully`})
-	}
-	catch(err){
-		console.error('Error sending OTP '+err.message)
-		res.status(500).json({ success: false, message: 'Failed to send OTP' });
-	}
-
-
-})
-
-app.post('/verify-otp',(req,res)=>{
-	console.log("verify-otp route hit");
-	let {phoneNum,otp} = req.body;
-
-	const storedOtp = otpStore.get(finalPhoneNum);
-	console.log('Map data '+otpStore);
-	console.log("Stored OTP is")
-	if(storedOtp&&storedOtp === otp){
-		const randomStr = Math.random().toString(36).substring(2, 7).toLocaleUpperCase();
-		console.log(randomStr);
-		console.log("Verified otp SUCCESS")
-		otpStore.delete(finalPhoneNum)
-		return res.json({ success: true, message: 'OTP verified',recString:randomStr });
-	}
-	else{
-		otpStore.clear();
-	console.log("Verified unsuccessfuly")
-	res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
-	}
-})
+  const storedOtp = otpStore.get(formattedPhone);
+  if (storedOtp && storedOtp === otp) {
+    otpStore.delete(formattedPhone);
+    const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
+    console.log(`OTP verified for ${formattedPhone}: ${randomStr}`);
+    return res.json({ success: true, message: "OTP verified", recString: randomStr });
+  } else {
+    otpStore.delete(formattedPhone); // delete only that one user's OTP
+    console.log(`OTP verification failed for ${formattedPhone}`);
+    return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
+  }
+});
 
 app.get('/',(req,res)=>{
 	console.log("Server succesfully hit the / route")
