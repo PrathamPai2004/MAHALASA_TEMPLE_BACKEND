@@ -435,6 +435,7 @@ app.post('/verify-otp',(req,res)=>{
 	let {phoneNum,otp} = req.body;
 
 	const storedOtp = otpStore.get(finalPhoneNum);
+	console.log('Map data '+otpStore);
 	console.log("Stored OTP is")
 	if(storedOtp&&storedOtp === otp){
 		const randomStr = Math.random().toString(36).substring(2, 7).toLocaleUpperCase();
