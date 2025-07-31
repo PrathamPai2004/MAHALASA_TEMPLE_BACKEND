@@ -6,6 +6,7 @@ import {registerModel,Room,sevaModel,sevaAdminModel} from './models/registerMode
 import cookieParser from 'cookie-parser';
 import nodemailer from 'nodemailer';
 import 'dotenv/config';
+import axios from 'axois'
 // import jwt, { verify } from 'jsonwebtoken'
 // import nodemailer from 'nodemailer';
 // const User =
