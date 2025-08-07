@@ -549,3 +549,10 @@ app.post("/admin-login", async (req, res) => {
     return res.status(500).json({ error: "Server error: " + error.message });
   }
 });
+
+
+
+
+app.get('/ping', (req, res) => {
+  res.send('pong');
+});
