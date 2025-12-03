@@ -47,6 +47,19 @@ const sevaAdmin = new mongoose.Schema({
 	
 })
 
+const reviewSchema = new mongoose.Schema({
+	name : String,
+	email : String,
+	review : String,
+	rating : Number,
+	date : Date,
+})
+
+const adminLogin = new mongoose.Schema({
+	username : String,
+	password : String,
+})
+
 const roomSchema = new mongoose.Schema({
 	dormitory : String,
 	roomNumber : Number,
@@ -57,10 +70,9 @@ const roomSchema = new mongoose.Schema({
 })
 
 export const Room = mongoose.model('Room',roomSchema)
-
-
-
+export const Review = mongoose.model('Review',reviewSchema)
 export const registerModel = mongoose.model('register',registerSchema)
 export const sevaModel = mongoose.model('seva',sevaSchema)
 export const sevaAdminModel = mongoose.model('sevaAdmin',sevaAdmin)
+export const adminLoginModel = mongoose.model('adminLogin',adminLogin)
 export default registerModel
