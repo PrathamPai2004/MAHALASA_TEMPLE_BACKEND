@@ -2,7 +2,7 @@ import express from 'express'
 import mongoose from 'mongoose'
 import cors from 'cors';
 import twilio from 'twilio'
-import {registerModel,Room,sevaModel,sevaAdminModel} from './models/registerModel.js';
+import {registerModel,Room,sevaModel,sevaAdminModel,adminLoginModel} from './models/registerModel.js';
 import cookieParser from 'cookie-parser';
 import nodemailer from 'nodemailer';
 import 'dotenv/config';
@@ -533,22 +533,32 @@ app.get('/seva-stats',async (req,res)=>{
 	}
 })
 
-const adminName =  "abc";
-const adminPassword="abc";
 
-app.post("/admin-login", async (req, res) => {
-  const { username, password } = req.body;
 
-  try {
-    if (username === adminName && password === adminPassword) {
-      return res.status(200).json({ message: "success", username });
-    } else {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
-  } catch (error) {
-    return res.status(500).json({ error: "Server error: " + error.message });
-  }
-});
+app.post('/admin-login',async(req,res)=>{
+	const {username,password} = req.body;
+
+	try{
+		const admin = await adminLoginModel.findOne({username:username});
+		if(!admin){
+			console.log("admin not found")
+			console.log("Admin not found : admin entered "+admin)
+			return res.status(404).json({message:"Admin not found"})
+		}
+		if(admin.password!==password){
+			console.log("Admin username correct but PASSWORD INCORRECT -> "+admin)
+			return res.status(401).json({message:"Invalid password"})
+		}
+		console.log("Admin logged in successfully : response -> " +admin)
+		return res.status(200).json({message:"success",username:admin.username})
+
+	}
+	catch(error){
+		console.log(error.message)
+		return res.status(500).json({error:"Server error: "+ error.message})
+	}
+})
+
 
 
 
