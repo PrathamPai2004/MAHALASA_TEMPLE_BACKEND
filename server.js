@@ -6,13 +6,18 @@ import {registerModel,Room,sevaModel,sevaAdminModel,adminLoginModel} from './mod
 import cookieParser from 'cookie-parser';
 import nodemailer from 'nodemailer';
 import 'dotenv/config';
-import axios from 'axios'
+import axios from 'axios';
+import { askTempleBot } from './chat.js';
+import Groq from "groq-sdk";
 // import jwt, { verify } from 'jsonwebtoken'
 // import nodemailer from 'nodemailer';
 // const User =
 const PORT = process.env.PORT || 3001;
 const JWT_SECRET = "pratham_jwt_secret_2004_born"
 
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+});
 
 
 const transporter = nodemailer.createTransport({
@@ -560,6 +565,18 @@ app.post('/admin-login',async(req,res)=>{
 })
 
 
+app.post("/chat", async (req, res) => {
+  const { question } = req.body;
+  console.log(question)
+
+  try {
+    const answer = await askTempleBot(question);
+    res.json({ answer });
+  } catch (err) {
+    console.error("Chat error:", err);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
 
 
 
