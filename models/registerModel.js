@@ -44,7 +44,9 @@ const sevaAdmin = new mongoose.Schema({
 	date_booked:{
 		type : Date
 	},
-	
+	 phoneNum:{
+		 type:String
+	 }
 })
 
 const reviewSchema = new mongoose.Schema({
