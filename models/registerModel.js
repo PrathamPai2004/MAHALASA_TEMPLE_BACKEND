@@ -27,6 +27,9 @@ const sevaAdmin = new mongoose.Schema({
 	bookings:{
 		type:Number,
 		default:0
+	},
+	phoneNum:{
+		type:String
 	}
 })
 
